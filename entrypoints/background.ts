@@ -27,14 +27,11 @@ export default defineBackground(() => {
 
     if (message.type === "objectStore-clear") {
       store.clear();
-      console.log("objectStore cleared.");
     }
 
     if (message.type === "objectStore-fill") {
-      console.log("objectStore-fill called");
       if (message.contentType === "blob") {
         store.put({ latest: message.content }, "latest");
-        console.log("stored");
       }
     }
     return true;

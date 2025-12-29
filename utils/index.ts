@@ -1,5 +1,5 @@
-export function getButtonFromUseElement (hrefValue: string) {
-    const use = document.querySelector<SVGUseElement>(`[href="${hrefValue}"]`);
+export function getButtonFromUseElement (svgId: string) {
+    const use = document.querySelector<SVGUseElement>(`[href="/cdn/assets/sprites-core-i9agxugi.svg#${svgId}"]`);
     if (!use) return;
 
     const svg = use.parentElement as SVGSVGElement | null;
@@ -10,3 +10,10 @@ export function getButtonFromUseElement (hrefValue: string) {
 
     return button;
 };
+
+export function fillPromptTextarea (text: string) {
+    const promptTextAreaParagraphe = document.querySelector('#prompt-textarea')?.children[0];
+    if (!promptTextAreaParagraphe) return;
+    
+    promptTextAreaParagraphe.innerHTML = text;
+}

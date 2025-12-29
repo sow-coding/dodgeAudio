@@ -4,7 +4,19 @@ import { clearObjectStore, fillObjectStore } from "@/utils/database";
 export default defineContentScript({
   matches: ['<all_urls>'],
   main() {
-    const dictateButton = getButtonFromUseElement('/cdn/assets/sprites-core-i9agxugi.svg#29f921');
+    browser.runtime.onMessage.addListener((message) => {
+      if (message.action === "run-backup") {
+        browser.runtime.sendMessage({
+          type: "back-up"
+        }).then((text) => {
+          fillPromptTextarea(text)
+        }).catch((err) => {
+          console.error(err)
+        })
+      }
+    })
+    
+    const dictateButton = getButtonFromUseElement('29f921');
     if (!dictateButton) return;
 
     let mediaChunks: Blob[] = [];
@@ -15,22 +27,19 @@ export default defineContentScript({
         .getUserMedia({ audio: true })
 
         .then((stream) => {
-          const mediaRecorder = new MediaRecorder(stream, {
-            mimeType: "audio/webm"
-          });
+          const mediaRecorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
           clearObjectStore();
           dictateButton.addEventListener("click", () => {
             // manage the delay (because of conditionnal rendering & react)
             // with MutationObserver instead
             setTimeout(() => {
-              const submitDictationButton = getButtonFromUseElement('/cdn/assets/sprites-core-i9agxugi.svg#fa1dbd');
+              const submitDictationButton = getButtonFromUseElement('fa1dbd');
               if (!submitDictationButton) return;
 
-              const cancelDictationButton = getButtonFromUseElement('/cdn/assets/sprites-core-i9agxugi.svg#85f94b');
+              const cancelDictationButton = getButtonFromUseElement('85f94b');
               if (!cancelDictationButton) return;
 
               mediaRecorder.start();
-              console.log("recording started.");
 
               submitDictationButton.addEventListener("click", () => {
                 mediaRecorder.stop();

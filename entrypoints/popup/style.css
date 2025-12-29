@@ -95,3 +95,17 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+#backupDiv {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#backupButton {
+  margin-bottom: 10px;
+}
+
+#backup {
+  max-width: 300px;
+}

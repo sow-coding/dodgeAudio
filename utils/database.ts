@@ -21,13 +21,14 @@ export class Database {
 }
 
 export async function clearObjectStore () {
-    console.log("objectStore-clear triggered")
     await browser.runtime.sendMessage({
         type: "objectStore-clear"
     });
 }
 
 export async function fillObjectStore (content: Blob) {
+    // doesn't work on Chrome (sending Blob) because of 
+    // the JSON serialization algorithm used to send messages.
     await browser.runtime.sendMessage({
         type: "objectStore-fill",
         contentType: "blob",

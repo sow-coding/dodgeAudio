@@ -3,7 +3,7 @@ import { getTextFromSpeech } from "@/utils/fetch";
 export default defineBackground(() => {
   const dbPromise = Database.open();
 
-  browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+  browser.runtime.onMessage.addListener(async function (message) {
     const db = await dbPromise;
     if (!db) return;
 
@@ -11,18 +11,18 @@ export default defineBackground(() => {
     const store = tx.objectStore("audio");
 
     if (message.type === "back-up") {
-      const req = store.get("latest");
+      return new Promise((resolve, reject) => {
+        const req = store.get("latest");
 
-      req.onsuccess = async () => {
-        const blob = req.result?.latest;
-        console.log(blob)
-        const { text } = await getTextFromSpeech(blob);
-        sendResponse(text);
-      };
+        req.onsuccess = async () => {
+          const blob = req.result?.latest;
+          console.log(blob)
+          const { text } = await getTextFromSpeech(blob);
+          resolve(text);
+        };
 
-      req.onerror = () => console.error("get latest failed");
-
-      return true;
+        req.onerror = () => reject(req.error);
+        })
     }
 
     if (message.type === "objectStore-clear") {
@@ -37,5 +37,6 @@ export default defineBackground(() => {
         console.log("stored");
       }
     }
+    return true;
   })
 });

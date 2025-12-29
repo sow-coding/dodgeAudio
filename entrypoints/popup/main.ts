@@ -6,7 +6,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   </div>
 `;
 
-document.querySelector<HTMLButtonElement>('#backupButton')?.addEventListener('click', () => {
+document.querySelector<HTMLButtonElement>('#backupButton')?.addEventListener('click', async () => {
   browser.runtime.sendMessage({
     type: "back-up"
   }).then((message) => {

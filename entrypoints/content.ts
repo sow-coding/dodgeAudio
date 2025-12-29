@@ -15,7 +15,9 @@ export default defineContentScript({
         .getUserMedia({ audio: true })
 
         .then((stream) => {
-          const mediaRecorder = new MediaRecorder(stream);
+          const mediaRecorder = new MediaRecorder(stream, {
+            mimeType: "audio/webm"
+          });
           clearObjectStore();
           dictateButton.addEventListener("click", () => {
             // manage the delay (because of conditionnal rendering & react)
@@ -33,8 +35,7 @@ export default defineContentScript({
               submitDictationButton.addEventListener("click", () => {
                 mediaRecorder.stop();
                 mediaRecorder.onstop = async () => {
-                  const blob = new Blob(mediaChunks, { type: "audio/ogg; codecs=opus" });
-                  mediaChunks = [];
+                  const blob = new Blob(mediaChunks, { type: "audio/webm" });
                   fillObjectStore(blob);
                 }
               });

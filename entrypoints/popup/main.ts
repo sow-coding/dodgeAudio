@@ -11,7 +11,7 @@ document.querySelector<HTMLButtonElement>('#backupButton')?.addEventListener('cl
     type: "back-up"
   }).then((message) => {
     console.log("Voici le texte: " + message);
-  }, (error) => {
-    console.error(error);
+  }).catch((err) => {
+    console.error(err)
   })
 })

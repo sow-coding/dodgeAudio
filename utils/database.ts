@@ -1,26 +1,22 @@
 export class Database {
-    constructor (private db: IDBDatabase) {}
+    constructor () {}
 
-    static open(): IDBOpenDBRequest {
-        return indexedDB.open("audio-db", 1);
-    }
+    static open(): Promise<IDBDatabase> {
+        const IDBOpenRequest = indexedDB.open("audio-db", 1);
+        return new Promise((resolve, reject) => {
+            let db;
+            IDBOpenRequest.onerror = () => {reject(IDBOpenRequest.error)}
 
-    createObjectStore (name: string, options?: any): IDBObjectStore {
-        return this.db.createObjectStore(name, options);
-    }
-}
-// extends???
-export class DatabaseRequest {
-    constructor() {}
-    static onSuccess (databaseRequest: IDBRequest<any>, callback: (e: Event) => any) {
-        databaseRequest.onsuccess = callback;
-    }
+            IDBOpenRequest.onupgradeneeded = (event: any) => {
+                db = event.target.result as IDBDatabase;
+                db.createObjectStore("audio", { autoIncrement: true });
+            }
 
-    static onError(databaseRequest: IDBRequest<any>, error?: string) {
-        return databaseRequest.onerror = () => {
-            console.log(error);
-            console.error(databaseRequest.error);
-        };
+            IDBOpenRequest.onsuccess = () => {
+                db = IDBOpenRequest.result;
+                resolve(db);
+            }
+        })
     }
 }
 
@@ -31,11 +27,10 @@ export async function clearObjectStore () {
     });
 }
 
-export async function fillObjectStore (content: any) {
-    console.log("objectStore-fill triggered")
+export async function fillObjectStore (content: Blob) {
     await browser.runtime.sendMessage({
         type: "objectStore-fill",
         contentType: "blob",
-        content
+        content: content
     });
 }

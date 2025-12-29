@@ -1,5 +1,6 @@
 export async function getTextFromSpeech (blob: Blob) {
-    const file = new File([blob], "audio", { type: "audio/ogg" });
+    const file = new File([blob], "audio", { type: "audio/webm" });
+
     const formData = new FormData();
     formData.append("file", file);
     formData.append("model", "gpt-4o-transcribe");
